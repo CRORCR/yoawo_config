@@ -1,0 +1,16 @@
+{
+
+	{
+		"merchants_type":1,
+		"ensure":100,
+		"experience":900
+
+	},
+	{
+		"merchants_type":2,
+		"ensure":100,
+		"experience":900
+
+	}
+}
+
