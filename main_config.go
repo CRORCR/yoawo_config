@@ -13,10 +13,14 @@ import (
 )
 
 func startRPCServer(){
-        reward := new( server.IdentityReward )
+        reward := new( server.User )
         rpc.Register( reward )
         poundage := new( server.PoundageServer )
 	rpc.Register( poundage )
+	buyrules := new( server.ServerBuyRules )
+	rpc.Register( buyrules )
+	defaulthome := new( server.ServerDHome )
+	rpc.Register( defaulthome )
 
         tcpAddr, err := net.ResolveTCPAddr("tcp", ":7000")
         if err != nil {
@@ -37,6 +41,7 @@ func taskList(){
 	mode.UserInit( "config/chicken_user.json" )
 	mode.PoundageInit( "config/poundage.json" )
 	mode.BuyRulesInit( "config/buy_rules.json" )
+	mode.NextHomeInit( "config/next_home.json" )
 }
 
 //golang 定时器，启动的时候执行一次，以后每天晚上12点执行
@@ -58,6 +63,7 @@ func main(){
 	mode.GUserLock = new(sync.RWMutex)
 	mode.GPounLock = new(sync.RWMutex)
 	mode.GBRulLock = new(sync.RWMutex)
+	mode.GHomeLock = new(sync.RWMutex)
 
 	// 执行计划任务 5分钟执行一次
 	/*

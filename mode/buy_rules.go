@@ -3,7 +3,7 @@ package mode
 
 import (
 	"os"
-	//"fmt"
+	"fmt"
 	"sync"
 	"io/ioutil"
 	"encoding/json"
@@ -16,11 +16,15 @@ type BuyRules struct {
 	Enable		bool	`json:"enable"`		// 是否启用
 	V45		int	`json:"v45"`		// 45天伐值
 	V60		int	`json:"v60"`		// 60天伐值
-	V75		int	`json:"75"`		// 75天伐值
-	V90		int	`json:"90"`		// 90天伐值
+	V75		int	`json:"v75"`		// 75天伐值
+	V90		int	`json:"v90"`		// 90天伐值
 }
 
-var GBuyRules []BuyRules
+type ModeBuyRules struct {
+	Rules []BuyRules	`json:"rules"`
+}
+
+var GBuyRules ModeBuyRules
 var GBRulLock *sync.RWMutex
 
 /*
@@ -42,6 +46,7 @@ func BuyRulesInit( strFileName string ) {
                 panic("读取文件错误:" + strFileName)
         }
         json.Unmarshal( jsonData, &GBuyRules )
+	fmt.Println("FILE:", &GBuyRules)
 	GBRulLock.RUnlock()
 }
 
@@ -80,8 +85,10 @@ func ( this *IdentityReward )Set()error{
  * 描述：返回所有的节点数据
  *
  **************************************************************/
-func ( this *BuyRules )Get()[]BuyRules {
-	return GBuyRules
+func ( this *ModeBuyRules )Get() {
+	*this = GBuyRules
+	fmt.Println("this", this)
+	fmt.Println("grules", GBuyRules )
 }
 
 /*

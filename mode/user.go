@@ -17,7 +17,7 @@ type IdentityReward struct {
 	NuoMerchants	int	`json:"nuo_merchants"`
 }
 
-var GIdentity	[]IdentityReward
+var GUser	[]IdentityReward
 var GUserLock	*sync.RWMutex
 
 /*
@@ -26,7 +26,7 @@ var GUserLock	*sync.RWMutex
  *	计划任务中执行。
  *
  **************************************************************/
-func Init( strFileName string ) {
+func UserInit( strFileName string ) {
 	GUserLock.RLock()
 	jsonFile, err := os.Open(strFileName)
 	if err != nil {
@@ -38,7 +38,7 @@ func Init( strFileName string ) {
         if era != nil {
                 panic("读取文件错误:" + strFileName)
         }
-        json.Unmarshal( jsonData, &GIdentity )
+        json.Unmarshal( jsonData, &GUser )
 	GUserLock.RUnlock()
 }
 
@@ -64,7 +64,7 @@ func ( this *IdentityReward )Set()error{
 	GUserLock.Lock()
 
 	// STEP 2 设置修改数据
-	var user User
+	var user IdentityReward
 	var k int
 	for k,_ = range GUser {
 		if GUser[k].Id == this.Id {
