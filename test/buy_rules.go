@@ -27,17 +27,37 @@ type ModeBuyRules struct {
 
 
 func main(){
+	//getBuy()
+	setbBuy()
+}
+func setbBuy() {
+	client, err := rpc.Dial("tcp", "127.0.0.1:7000")
+	if err != nil {
+		fmt.Println("连接RPC服务失败：", err)
+	}
+	fmt.Println("连接RPC服务成功")
+	var rules BuyRules
+	var user ModeBuyRules
+	rules.Number = 1
+	//number必须对应上,否则就是增加了
+	rules.Enable = true
+	rules.V45 = 12345
+	err = client.Call("ServerBuyRules.Set", &rules, &user)
+	if err != nil {
+		fmt.Println("调用失败：", err)
+	}
+}
+func getBuy() {
 	client, err := rpc.Dial("tcp", "127.0.0.1:7000")
 	if err != nil {
 		fmt.Println("连接RPC服务失败：", err)
 	}
 	fmt.Println("连接RPC服务成功")
 	var user ModeBuyRules
-	err = client.Call("ServerBuyRules.Get", &user, &user )
+	err = client.Call("ServerBuyRules.Get", &user, &user)
 	if err != nil {
 		fmt.Println("调用失败：", err)
 	}
 	fmt.Println("调用结果：", user)
-
 }
 

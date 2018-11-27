@@ -1,7 +1,7 @@
 package server
 
 import(
-	"../mode"
+	"config/mode"
 )
 
 type User struct {
@@ -14,7 +14,7 @@ func ( this *User )Get( nId *uint8, user *mode.IdentityReward )error{
 	return nil
 }
 
-func ( this *User )Set( user *mode.IdentityReward, nId *int )error{
+func ( this *User )Set( user *mode.IdentityReward, nId *int)error{
 	return user.Set()
 }
 

@@ -1,27 +1,26 @@
-
 package mode
 
 import (
-	"os"
-	"fmt"
-	"sync"
-	"io/ioutil"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"sync"
 )
 
 // 购买规制
 type BuyRules struct {
-	Name		string	`json:"name"`		// 规则名称
-	Number		int	`json:"number"`		// 规则编号
-	Enable		bool	`json:"enable"`		// 是否启用
-	V45		int	`json:"v45"`		// 45天伐值
-	V60		int	`json:"v60"`		// 60天伐值
-	V75		int	`json:"v75"`		// 75天伐值
-	V90		int	`json:"v90"`		// 90天伐值
+	Name   string `json:"name"`   // 规则名称
+	Number int    `json:"number"` // 规则编号
+	Enable bool   `json:"enable"` // 是否启用
+	V45    int    `json:"v45"`    // 45天伐值
+	V60    int    `json:"v60"`    // 60天伐值
+	V75    int    `json:"v75"`    // 75天伐值
+	V90    int    `json:"v90"`    // 90天伐值
 }
 
 type ModeBuyRules struct {
-	Rules []BuyRules	`json:"rules"`
+	Rules []BuyRules `json:"rules"`
 }
 
 var GBuyRules ModeBuyRules
@@ -33,19 +32,19 @@ var GBRulLock *sync.RWMutex
  *	计划任务中执行。
  *
  **************************************************************/
-func BuyRulesInit( strFileName string ) {
+func BuyRulesInit(strFileName string) {
 	GBRulLock.RLock()
 	jsonFile, err := os.Open(strFileName)
 	if err != nil {
-                panic("打开文件错误，请查看:" + strFileName)
-        }
-        defer jsonFile.Close()
+		panic("打开文件错误，请查看:" + strFileName)
+	}
+	defer jsonFile.Close()
 
-        jsonData, era := ioutil.ReadAll(jsonFile)
-        if era != nil {
-                panic("读取文件错误:" + strFileName)
-        }
-        json.Unmarshal( jsonData, &GBuyRules )
+	jsonData, era := ioutil.ReadAll(jsonFile)
+	if era != nil {
+		panic("读取文件错误:" + strFileName)
+	}
+	json.Unmarshal(jsonData, &GBuyRules)
 	fmt.Println("FILE:", &GBuyRules)
 	GBRulLock.RUnlock()
 }
@@ -53,62 +52,31 @@ func BuyRulesInit( strFileName string ) {
 /*
  * 描述：修改相应的数据
  *
- **************************************************************
-func ( this *IdentityReward )Set()error{
-
+ */
+func (this *ModeBuyRules) Set(rules *BuyRules) error {
+	fmt.Printf("set mode:%+v\n",rules)
 	// STEP 1 加锁
 	GBRulLock.Lock()
-
 	// STEP 2 设置修改数据
-	var user User
-	var k int
-	for k,_ = range GUser {
-		if GUser[k].Id == this.Id {
-			user = GUser[k]
-			GUser[k] = *this
-			break
+	for k, _ := range GBuyRules.Rules {
+		if GBuyRules.Rules[k].Number == rules.Number {
+			GBuyRules.Rules[k]=*rules
 		}
 	}
-
 	// STEP 3 写入到文件
-	buff, _ := json.Marshal( GUser )
-	err := ioutil.WriteFile( "./config/chicken_user.json", buff, 0644 )
-	GUser[k] = user
-
+	buff, _ := json.Marshal(GBuyRules)
+	err := ioutil.WriteFile("./config/buy_rules.json", buff, 0644)
 	// STEP 4 解锁
 	GBRulLock.Unlock()
 	return err
 }
-*/
 
 /*
- * 描述：返回所有的节点数据
- *
- **************************************************************/
-func ( this *ModeBuyRules )Get() {
+ * desc:  返回所有的节点数据
+ * @create: 2018/11/27
+ */
+func (this *ModeBuyRules) Get() {
 	*this = GBuyRules
 	fmt.Println("this", this)
-	fmt.Println("grules", GBuyRules )
+	fmt.Println("grules", GBuyRules)
 }
-
-/*
- * 描述：添加本节点数据
- *
- **************************************************************
-func ( this *IdentityIdentityReward )Add()error{
-	var fage bool = false
-	if 0 != this.Id {
-		for _,v := range GUser {
-			if v.Id == this.Id {
-				fage = true
-				break
-			}
-		}
-		if fage {
-			GUser = append( GUser, *this )
-			return this.Set()
-		}
-	}
-	return nil
-}*/
-

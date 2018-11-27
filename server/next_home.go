@@ -2,7 +2,7 @@
 package server
 
 import(
-	"../mode"
+	"config/mode"
 )
 
 type ServerDHome struct {
@@ -14,3 +14,7 @@ func ( this *ServerDHome )Get( nType, sdefault *mode.DefaultHmoe )error{
 	return nil
 }
 
+func ( this *ServerDHome )Set(nType,sdefault *mode.DefaultHmoe )error{
+	sdefault.Set(*nType)
+	return nil
+}

@@ -1,39 +1,50 @@
 package main
 
 import (
-    "fmt"
-    "net/rpc"
+	"fmt"
+	"net/rpc"
 )
 
-
-type PoundageServer struct {
-	FileName string
-}
-
 type Parameter struct {
-	Money	 uint64	 `json:"money"`
+	Money    uint64  `json:"money"`
 	Poundage float64 `json:"poundage"`
 }
 
 type Poundage struct {
-	MonthLimit	uint64		`json:"MonthLimit"`
-	NodeList	[]Parameter     `json:"NoteList"`
+	MonthLimit uint64      `json:"MonthLimit"`
+	NodeList   []Parameter `json:"NoteList"`
 }
 
-
-func main(){
+func main() {
+	//getPoundage()
+	setPoundage()
+}
+func setPoundage() {
 	client, err := rpc.Dial("tcp", "127.0.0.1:7000")
 	if err != nil {
 		fmt.Println("连接RPC服务失败：", err)
 	}
 	fmt.Println("连接RPC服务成功")
-	var usera Poundage
+	var para = Parameter{5000, 100}
 	var userb Poundage
-	err = client.Call("PoundageServer.Get", &usera, &userb )
+	err = client.Call("PoundageServer.Set", &para, &userb)
 	if err != nil {
-		fmt.Println("调用失败：", err)
+		fmt.Println("调用失败:", err)
 	}
-	fmt.Println("调用结果：", userb)
-
+	fmt.Println("调用结果:", userb)
 }
 
+func getPoundage() {
+	client, err := rpc.Dial("tcp", "127.0.0.1:7000")
+	if err != nil {
+		fmt.Println("连接RPC服务失败:", err)
+	}
+	fmt.Println("连接RPC服务成功")
+	var usera Poundage
+	var userb Poundage
+	err = client.Call("PoundageServer.Get", &usera, &userb)
+	if err != nil {
+		fmt.Println("调用失败:", err)
+	}
+	fmt.Println("调用结果:", userb)
+}

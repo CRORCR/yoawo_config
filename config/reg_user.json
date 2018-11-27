@@ -1,0 +1,19 @@
+{
+	"cash"  : 10.22,
+	"trust" : 100.11,
+	"feeding" : 100,
+	"water" : 200,
+	"band" : 10000,
+	"default_home" : 10,	
+	"chicken" : [
+		{
+			"number" : 11,
+			"count" : 10
+		},
+		{
+			"number" : 12,
+			"count" : 10
+		}
+	]
+
+}

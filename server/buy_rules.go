@@ -3,7 +3,7 @@ package server
 
 import(
 	"fmt"
-	"../mode"
+	"config/mode"
 )
 
 type ServerBuyRules struct {
@@ -16,3 +16,7 @@ func ( this *ServerBuyRules )Get( inRules *mode.ModeBuyRules, outRules *mode.Mod
 	return nil
 }
 
+func ( this *ServerBuyRules )Set( inRules *mode.BuyRules, outRules *mode.ModeBuyRules )error{
+	outRules.Set(inRules)
+	return nil
+}
