@@ -1,65 +1,68 @@
 package main
 
 import (
-	"os"
 	"fmt"
 	"net"
-	"time"
-	"sync"
 	"net/rpc"
+	"os"
+	"sync"
+	"time"
 
 	"config/mode"
 	"config/server"
 )
 
-func startRPCServer(){
-        reward := new( server.User )
-        rpc.Register( reward )
-        poundage := new( server.PoundageServer )
-	rpc.Register( poundage )
-	buyrules := new( server.ServerBuyRules )
-	rpc.Register( buyrules )
-	defaulthome := new( server.ServerDHome )
-	rpc.Register( defaulthome )
+func startRPCServer() {
+	reward := new(server.User)
+	rpc.Register(reward)
+	poundage := new(server.PoundageServer)
+	rpc.Register(poundage)
+	buyrules := new(server.ServerBuyRules)
+	rpc.Register(buyrules)
+	buyTimes := new(server.ServerBuyTimes)
+	rpc.Register(buyTimes)
+	defaulthome := new(server.ServerDHome)
+	rpc.Register(defaulthome)
 
-        tcpAddr, err := net.ResolveTCPAddr("tcp", ":7000")
-        if err != nil {
-                fmt.Println("错误了哦")
-                os.Exit(1)
-        }
-        listener, err := net.ListenTCP("tcp", tcpAddr)
-        for {
-                conn, err := listener.Accept()
-                if err != nil {
-                        continue
-                }
-                rpc.ServeConn(conn)
-        }
+	tcpAddr, err := net.ResolveTCPAddr("tcp", ":7000")
+	if err != nil {
+		fmt.Println("错误了哦")
+		os.Exit(1)
+	}
+	listener, err := net.ListenTCP("tcp", tcpAddr)
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			continue
+		}
+		rpc.ServeConn(conn)
+	}
 }
 
-func taskList(){
-	mode.UserInit( "config/chicken_user.json" )
-	mode.PoundageInit( "config/poundage.json" )
-	mode.BuyRulesInit( "config/buy_rules.json" )
-	mode.NextHomeInit( "config/next_home.json" )
+func taskList() {
+	mode.UserInit("config/chicken_user.json")
+	mode.PoundageInit("config/poundage.json")
+	mode.BuyRulesInit("config/buy_rules.json")
+	mode.NextHomeInit("config/next_home.json")
+	mode.BuyTimesInit("config/buy_times.json")
 }
 
 //golang 定时器，启动的时候执行一次，以后每天晚上12点执行
 func startTimer(f func()) {
-        go func() {
-            for {
-                f()
-                now := time.Now()
-                // 计算下一个零点
-                next := now.Add(time.Hour * 24)
-                next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
-                t := time.NewTimer(next.Sub(now))
-                <-t.C
-            }
-        }()
+	go func() {
+		for {
+			f()
+			now := time.Now()
+			// 计算下一个零点
+			next := now.Add(time.Hour * 24)
+			next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
+			t := time.NewTimer(next.Sub(now))
+			<-t.C
+		}
+	}()
 }
 
-func main(){
+func main() {
 	mode.GUserLock = new(sync.RWMutex)
 	mode.GPounLock = new(sync.RWMutex)
 	mode.GBRulLock = new(sync.RWMutex)
@@ -85,8 +88,8 @@ func main(){
 	mode.GPoundage.Add( para )
 	mode.GPoundage.Set( para )
 	*/
-	fmt.Println( "启动定时器" )
-	startTimer( taskList )
-	fmt.Println( "启动RPC" )
+	fmt.Println("启动定时器")
+	startTimer(taskList)
+	fmt.Println("启动RPC")
 	startRPCServer()
 }
