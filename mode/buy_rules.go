@@ -17,13 +17,11 @@ type BuyRules struct {
 	V60    int    `json:"v60"`    // 60天伐值
 	V75    int    `json:"v75"`    // 75天伐值
 	V90    int    `json:"v90"`    // 90天伐值
+	Limit   int    `json:"limit"`   //购鸡总额控制
 }
 
-type ModeBuyRules struct {
-	Rules []BuyRules `json:"rules"`
-}
 
-var GBuyRules ModeBuyRules
+var buyRules BuyRules
 var GBRulLock *sync.RWMutex
 
 /*
@@ -44,27 +42,62 @@ func BuyRulesInit(strFileName string) {
 	if era != nil {
 		panic("读取文件错误:" + strFileName)
 	}
-	json.Unmarshal(jsonData, &GBuyRules)
-	fmt.Println("FILE:", &GBuyRules)
+	json.Unmarshal(jsonData, &buyRules)
+	fmt.Println("FILE:", &buyRules)
 	GBRulLock.RUnlock()
 }
 
 /*
  * 描述：修改相应的数据
  *
- */
-func (this *ModeBuyRules) Set(rules *BuyRules) error {
-	fmt.Printf("set mode:%+v\n",rules)
+ **************************************************************
+func ( this *IdentityReward )Set()error{
+
+	// STEP 1 加锁
+	GBRulLock.Lock()
+
+	// STEP 2 设置修改数据
+	var user User
+	var k int
+	for k,_ = range GUser {
+		if GUser[k].Id == this.Id {
+			user = GUser[k]
+			GUser[k] = *this
+			break
+		}
+	}
+
+	// STEP 3 写入到文件
+	buff, _ := json.Marshal( GUser )
+	err := ioutil.WriteFile( "./config/chicken_user.json", buff, 0644 )
+	GUser[k] = user
+
+	// STEP 4 解锁
+	GBRulLock.Unlock()
+	return err
+}
+*/
+
+/*
+ * 描述：返回所有的节点数据
+ *
+ **************************************************************/
+func (this *BuyRules) Get() {
+	*this = buyRules
+	fmt.Println("this", this)
+	fmt.Println("grules", buyRules)
+}
+
+func (this *BuyRules) Set(rules *BuyRules) error {
+	fmt.Printf("set mode:%+v\n", rules)
 	// STEP 1 加锁
 	GBRulLock.Lock()
 	// STEP 2 设置修改数据
-	for k, _ := range GBuyRules.Rules {
-		if GBuyRules.Rules[k].Number == rules.Number {
-			GBuyRules.Rules[k]=*rules
-		}
+	if buyRules.Number == rules.Number {
+		buyRules = *rules
 	}
 	// STEP 3 写入到文件
-	buff, _ := json.Marshal(GBuyRules)
+	buff, _ := json.Marshal(buyRules)
 	err := ioutil.WriteFile("./config/buy_rules.json", buff, 0644)
 	// STEP 4 解锁
 	GBRulLock.Unlock()
@@ -72,11 +105,22 @@ func (this *ModeBuyRules) Set(rules *BuyRules) error {
 }
 
 /*
- * desc:  返回所有的节点数据
- * @create: 2018/11/27
- */
-func (this *ModeBuyRules) Get() {
-	*this = GBuyRules
-	fmt.Println("this", this)
-	fmt.Println("grules", GBuyRules)
-}
+ * 描述：添加本节点数据
+ *
+ **************************************************************
+func ( this *IdentityIdentityReward )Add()error{
+	var fage bool = false
+	if 0 != this.Id {
+		for _,v := range GUser {
+			if v.Id == this.Id {
+				fage = true
+				break
+			}
+		}
+		if fage {
+			GUser = append( GUser, *this )
+			return this.Set()
+		}
+	}
+	return nil
+}*/

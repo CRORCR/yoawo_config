@@ -14,7 +14,3 @@ func ( this *ServerDHome )Get( nType, sdefault *mode.DefaultHmoe )error{
 	return nil
 }
 
-func ( this *ServerDHome )Set(nType,sdefault *mode.DefaultHmoe )error{
-	sdefault.Set(*nType)
-	return nil
-}
