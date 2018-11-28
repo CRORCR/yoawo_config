@@ -17,9 +17,8 @@ type BuyRules struct {
 	V60    int    `json:"v60"`    // 60天伐值
 	V75    int    `json:"v75"`    // 75天伐值
 	V90    int    `json:"v90"`    // 90天伐值
-	Limit   int    `json:"limit"`   //购鸡总额控制
+	Limit  int    `json:"limit"`  //购鸡总额控制
 }
-
 
 var buyRules BuyRules
 var GBRulLock *sync.RWMutex

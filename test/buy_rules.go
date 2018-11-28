@@ -20,10 +20,6 @@ type BuyRules struct {
 	Limit   int    `json:"limit"`   //购鸡总额控制
 }
 
-type ModeBuyRules struct {
-	Rules []BuyRules `json:"rules"`
-}
-
 func main() {
 	//getBuy()
 	setbBuy()
