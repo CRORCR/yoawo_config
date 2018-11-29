@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-// 购买规制
+// 保证金规则
 type Margin struct {
 	Nuo   int `json:"nuo"`   // nuo余额
 	Money int `json:"money"` // 现金余额
@@ -16,12 +16,6 @@ type Margin struct {
 
 var GMarginHome Margin
 
-/*
- * 描述：	把相应配置文件中的数据刷新到内存中，本方法在
- *
- *	计划任务中执行。
- *
- **************************************************************/
 func MarginInit(strFileName string) {
 	GHomeLock.RLock()
 	jsonFile, err := os.Open(strFileName)
@@ -39,10 +33,6 @@ func MarginInit(strFileName string) {
 	GHomeLock.RUnlock()
 }
 
-/*
- * 描述：根据nType数值不同返回不同的数
- *
- **************************************************************/
 func (this *Margin) Get() {
 	*this = GMarginHome
 }
