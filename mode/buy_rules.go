@@ -94,9 +94,7 @@ func ( this *IdentityReward )Set()error{
  */
 func (a *BuyCountAndLevel) Get(index int) {
 	//传入的参数处于哪个级别,返回可购数量
-	fmt.Println("index=10000?",index)
 	*a = getLevelAndCount(index)
-	fmt.Println("a==?",a)
 	return
 }
 
@@ -106,7 +104,6 @@ func (a *BuyCountAndLevel) Get(index int) {
  */
 func getLevelAndCount(index int) (a BuyCountAndLevel) {
 	buy :=BuyCountAndLevel{}
-	fmt.Println("getLevelAndCount=10000?",index)
 	if index<150{
 		buy.Level=0
 		buy.Num=0

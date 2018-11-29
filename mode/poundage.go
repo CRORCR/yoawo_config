@@ -14,8 +14,8 @@ type Parameter struct {
 }
 
 type Poundage struct {
-	MonthLimit	uint64		`json:"MonthLimit"`
-	NodeList	[]Parameter     `json:"NoteList"`
+	MonthLimit uint64      `json:"month_limit"`
+	NodeList   []Parameter `json:"note_list"`
 }
 
 var GPoundage	Poundage
