@@ -20,7 +20,7 @@ func setMargin() {
 		fmt.Println("连接RPC服务失败：", err)
 	}
 	fmt.Println("连接RPC服务成功")
-	var margin = Margin{2, 2}
+	var margin = Margin{0, 0}
 	err = client.Call("ServerMargin.Set", &margin, &margin)
 
 	if err != nil {

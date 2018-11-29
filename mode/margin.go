@@ -51,8 +51,14 @@ var lock sync.Mutex
 
 func (this *Margin) Set(def Margin) error {
 	lock.Lock()
-	defer func() {lock.Unlock()}()
-	GMarginHome = def
+	defer func() { lock.Unlock() }()
+	//可能只设置一个,防止覆盖
+	if def.Money > 0 {
+		GMarginHome.Money = def.Money
+	}
+	if def.Nuo > 0 {
+		GMarginHome.Nuo = def.Nuo
+	}
 	buff, _ := json.Marshal(GMarginHome)
 	err := ioutil.WriteFile("./config/margin.json", buff, 0644)
 	return err
