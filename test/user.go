@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"net/rpc"
 )
 
@@ -14,8 +15,12 @@ type User struct {
 }
 
 func main() {
-	getUser()
+	//getUser()
 	//setUser()
+	v:=100/3.3
+	fmt.Println(v)
+	fmt.Println(math.Floor(float64(v)))
+
 }
 
 func setUser() {

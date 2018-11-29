@@ -23,8 +23,8 @@ type ServerBuyTimes struct {
 }
 
 func main() {
-	//getTimes()
-	setTimes()
+	getTimes()
+	//setTimes()
 }
 func setTimes() {
 	client, err := rpc.Dial("tcp", "127.0.0.1:7000")
@@ -55,11 +55,11 @@ func getTimes() {
 		fmt.Println("连接RPC服务失败：", err)
 	}
 	fmt.Println("连接RPC服务成功")
-	//var index =100
-	var result BuyTimes
-	err = client.Call("ServerBuyTimes.Get", &result, &result)
+	var index = 100
+	var result Int
+	err = client.Call("ServerBuyTimes.Get", &index, &result)
 	if err != nil {
-		fmt.Println("调用失败：", err)
+		fmt.Println("调用失败:", err)
 	}
-	fmt.Println("调用结果：", result)
+	fmt.Println("调用结果:", result)
 }

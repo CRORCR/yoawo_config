@@ -17,12 +17,23 @@ type BuyRules struct {
 	V60    int    `json:"v60"`    // 60天伐值
 	V75    int    `json:"v75"`    // 75天伐值
 	V90    int    `json:"v90"`    // 90天伐值
-	Limit   int    `json:"limit"`   //购鸡总额控制
+	Limit  int    `json:"limit"`   //购鸡总额控制
+}
+
+type ModeBuyRules struct {
+	Rules []BuyRules `json:"rules"`
+}
+
+type BuyCountAndLevel struct {
+	Level int `json:"level"`
+	Num   int `json:"num"`
 }
 
 func main() {
 	//getBuy()
-	setbBuy()
+	//setbBuy()
+
+	getBuyByCount()
 }
 func setbBuy() {
 	client, err := rpc.Dial("tcp", "127.0.0.1:7000")
@@ -52,5 +63,22 @@ func getBuy() {
 	if err != nil {
 		fmt.Println("调用失败：", err)
 	}
-	fmt.Println("调用结果：", buyRules)
+	fmt.Println("调用结果:", buyRules)
+}
+
+func getBuyByCount() {
+	client, err := rpc.Dial("tcp", "127.0.0.1:7000")
+	if err != nil {
+		fmt.Println("连接RPC服务失败：", err)
+	}
+	fmt.Println("连接RPC服务成功")
+
+	var index = 10000
+	var result BuyCountAndLevel
+	err = client.Call("ServerBuyRules.GetByIndex", &index, &result)
+
+	if err != nil {
+		fmt.Println("调用失败：", err)
+	}
+	fmt.Println("调用结果:", result)
 }

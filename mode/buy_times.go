@@ -40,7 +40,7 @@ var (
 )
 
 /*
- * 描述：	把相应配置文件中的数据刷新到内存中，本方法在
+ * 描述:把相应配置文件中的数据刷新到内存中，本方法在
  *
  *	计划任务中执行。
  *
@@ -88,14 +88,13 @@ func (this *BuyTimes) Set(rules *BuyTimes) error {
 }
 
 /*
- * desc:  返回所有的节点数据
+ * desc:  返回指定额度等级
  * @create: 2018/11/27
  */
-func (this *BuyTimes) Get() {
-	// STEP 2 设置修改数据
-	//fmt.Println("index==?",index)
-	*this = buyTimes
-	fmt.Println("this:", this)
+func (a *Int) Get(index int) {
+	level := getLevel(index)
+	*a = Int(level)
+	//*this = buyTimes
 	return
 }
 

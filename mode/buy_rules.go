@@ -1,10 +1,13 @@
 package mode
 
 import (
+	"config/lib"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"os"
+	"strconv"
 	"sync"
 )
 
@@ -20,8 +23,16 @@ type BuyRules struct {
 	Limit  int    `json:"limit"`  //购鸡总额控制
 }
 
-var buyRules BuyRules
-var GBRulLock *sync.RWMutex
+var (
+	buyRules  BuyRules
+	GBRulLock *sync.RWMutex
+	buyCountAndLevel BuyCountAndLevel
+)
+
+type BuyCountAndLevel struct {
+	Level int `json:"level"`
+	Num   int `json:"num"`
+}
 
 /*
  * 描述：	把相应配置文件中的数据刷新到内存中，本方法在
@@ -78,6 +89,52 @@ func ( this *IdentityReward )Set()error{
 */
 
 /*
+ * desc:  返回指定额度等级
+ * @create: 2018/11/27
+ */
+func (a *BuyCountAndLevel) Get(index int) {
+	//传入的参数处于哪个级别,返回可购数量
+	fmt.Println("index=10000?",index)
+	*a = getLevelAndCount(index)
+	fmt.Println("a==?",a)
+	return
+}
+
+/*
+ * desc:  "v45":150,"v60":600,"v75":7000,"v90":90000
+ * @create: 2018/11/28
+ */
+func getLevelAndCount(index int) (a BuyCountAndLevel) {
+	buy :=BuyCountAndLevel{}
+	fmt.Println("getLevelAndCount=10000?",index)
+	if index<150{
+		buy.Level=0
+		buy.Num=0
+	}else if index>=lib.BuyLevelAndCountArray[0][1] && index<lib.BuyLevelAndCountArray[1][1]{//150-600
+		buy.Level=lib.BuyLevelAndCountArray[0][0]
+		v:=index/lib.BuyLevelAndCountArray[0][1]
+		float,_ := strconv.ParseFloat(strconv.Itoa(v),64)
+		buy.Num=int(math.Floor(float))
+	}else if index>=lib.BuyLevelAndCountArray[1][1] && index<lib.BuyLevelAndCountArray[2][1]{//600-7000
+		buy.Level=lib.BuyLevelAndCountArray[1][0]
+		v:=index/lib.BuyLevelAndCountArray[1][1]
+		float,_ := strconv.ParseFloat(strconv.Itoa(v),64)
+		buy.Num=int(math.Floor(float))
+	}else if index>=lib.BuyLevelAndCountArray[2][1] && index<lib.BuyLevelAndCountArray[3][1]{
+		buy.Level=lib.BuyLevelAndCountArray[2][0]
+		v:=index/lib.BuyLevelAndCountArray[2][1]
+		float,_ := strconv.ParseFloat(strconv.Itoa(v),64)
+		buy.Num=int(math.Floor(float))
+	}else{
+		buy.Level=lib.BuyLevelAndCountArray[3][0]
+		v:=index/lib.BuyLevelAndCountArray[3][1]
+		float,_ := strconv.ParseFloat(strconv.Itoa(v),64)
+		buy.Num=int(math.Floor(float))
+	}
+	return buy
+}
+
+/*
  * 描述：返回所有的节点数据
  *
  **************************************************************/
@@ -89,16 +146,12 @@ func (this *BuyRules) Get() {
 
 func (this *BuyRules) Set(rules *BuyRules) error {
 	fmt.Printf("set mode:%+v\n", rules)
-	// STEP 1 加锁
 	GBRulLock.Lock()
-	// STEP 2 设置修改数据
 	if buyRules.Number == rules.Number {
 		buyRules = *rules
 	}
-	// STEP 3 写入到文件
 	buff, _ := json.Marshal(buyRules)
 	err := ioutil.WriteFile("./config/buy_rules.json", buff, 0644)
-	// STEP 4 解锁
 	GBRulLock.Unlock()
 	return err
 }
