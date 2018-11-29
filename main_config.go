@@ -23,6 +23,8 @@ func startRPCServer() {
 	rpc.Register(buyTimes)
 	defaulthome := new(server.ServerDHome)
 	rpc.Register(defaulthome)
+	serverMargin := new(server.ServerMargin)
+	rpc.Register(serverMargin)
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp", ":7000")
 	if err != nil {
@@ -45,6 +47,7 @@ func taskList() {
 	mode.BuyRulesInit("config/buy_rules.json")
 	mode.NextHomeInit("config/next_home.json")
 	mode.BuyTimesInit("config/buy_times.json")
+	mode.MarginInit("config/margin.json")
 }
 
 //golang 定时器，启动的时候执行一次，以后每天晚上12点执行

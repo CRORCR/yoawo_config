@@ -9,13 +9,12 @@ import (
 )
 
 // 购买规制
-type DefaultHmoe struct {
-	DefaultHome int `json:"default_home"` // 新用户默认给多少下家的数量
-	ChickenHome int `json:"chicken_home"` // 购买一只鸡给多少下家的数量
+type Margin struct {
+	Nuo   int `json:"nuo"`   // nuo余额
+	Money int `json:"money"` // 现金余额
 }
 
-var GNextHome DefaultHmoe
-var GHomeLock *sync.RWMutex
+var GMarginHome Margin
 
 /*
  * 描述：	把相应配置文件中的数据刷新到内存中，本方法在
@@ -23,7 +22,7 @@ var GHomeLock *sync.RWMutex
  *	计划任务中执行。
  *
  **************************************************************/
-func NextHomeInit(strFileName string) {
+func MarginInit(strFileName string) {
 	GHomeLock.RLock()
 	jsonFile, err := os.Open(strFileName)
 	if err != nil {
@@ -35,8 +34,8 @@ func NextHomeInit(strFileName string) {
 	if era != nil {
 		panic("读取文件错误:" + strFileName)
 	}
-	json.Unmarshal(jsonData, &GNextHome)
-	fmt.Println("FILE:", GNextHome)
+	json.Unmarshal(jsonData, &GMarginHome)
+	fmt.Println("FILE:", GMarginHome)
 	GHomeLock.RUnlock()
 }
 
@@ -44,18 +43,17 @@ func NextHomeInit(strFileName string) {
  * 描述：根据nType数值不同返回不同的数
  *
  **************************************************************/
-func (this *DefaultHmoe) Get() {
-	*this = GNextHome
+func (this *Margin) Get() {
+	*this = GMarginHome
 }
 
-func (this *DefaultHmoe) Set(def DefaultHmoe) error {
-	GUserLock.Lock()
-	GNextHome = def
-	// STEP 3 写入到文件
-	buff, _ := json.Marshal(GNextHome)
-	err := ioutil.WriteFile("./config/next_home.json", buff, 0644)
+var lock sync.Mutex
 
-	// STEP 4 解锁
-	GUserLock.Unlock()
+func (this *Margin) Set(def Margin) error {
+	lock.Lock()
+	defer func() {lock.Unlock()}()
+	GMarginHome = def
+	buff, _ := json.Marshal(GMarginHome)
+	err := ioutil.WriteFile("./config/margin.json", buff, 0644)
 	return err
 }
