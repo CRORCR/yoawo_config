@@ -37,7 +37,7 @@ func setHighLimit() {
 		fmt.Println("连接RPC服务失败：", err)
 	}
 	fmt.Println("连接RPC服务成功")
-	err = client.Call("ServerHighLimit.Set", &highObject, nil)
+	err = client.Call("ServerHighLimit.Set", &highObject, &highObject)
 
 	if err != nil {
 		fmt.Println("调用失败：", err)

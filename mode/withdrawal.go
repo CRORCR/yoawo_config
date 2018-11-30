@@ -49,6 +49,8 @@ func HighObjectInit(strFileName string) {
 }
 
 func (this *HighObject) Get() {
+	fmt.Println("into high get")
+	fmt.Println("object:",highObject)
 	*this = highObject
 }
 

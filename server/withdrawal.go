@@ -8,7 +8,7 @@ type ServerHighLimit struct {
 	FileName string
 }
 
-func (this *ServerHighLimit) Get(sdefault *mode.HighObject) error {
+func (this *ServerHighLimit) Get(nType,sdefault *mode.HighObject) error {
 	sdefault.Get()
 	return nil
 }
