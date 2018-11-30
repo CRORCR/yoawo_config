@@ -27,6 +27,8 @@ func startRPCServer() {
 	rpc.Register(serverMargin)
 	serveFriends := new(server.ServeFriends)
 	rpc.Register(serveFriends)
+	serverHighLimit := new(server.ServerHighLimit)
+	rpc.Register(serverHighLimit)
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp", ":7000")
 	if err != nil {
@@ -51,6 +53,7 @@ func taskList() {
 	mode.BuyTimesInit("config/buy_times.json")
 	mode.MarginInit("config/margin.json")
 	mode.FriendsInit("config/friends.json")
+	mode.HighObjectInit("config/withdrawal.json")
 }
 
 //golang 定时器，启动的时候执行一次，以后每天晚上12点执行
