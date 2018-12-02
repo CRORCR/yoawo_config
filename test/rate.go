@@ -59,7 +59,7 @@ func getRateList() {
 var rates = make([]*Rate,0)
 var rateList = RateList{}
 func setRate(){
-	rates=append(rates,&Rate{"餐饮/食品","餐饮",float64(0.1)})
+	rates=append(rates,&Rate{"餐饮/食品","餐饮",float64(0.3)})
 	rates=append(rates,&Rate{"餐饮/食品","食品",float64(0.2)})
 	rates=append(rates,&Rate{"线下零售","超市",float64(0.3)})
 	rates=append(rates,&Rate{"线下零售","便利店",float64(0.4)})

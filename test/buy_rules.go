@@ -66,6 +66,7 @@ func getBuy() {
 	fmt.Println("调用结果:", buyRules)
 }
 
+//"v45":500,"v60":700,"v75":7000,"v90":9000,
 func getBuyByCount() {
 	client, err := rpc.Dial("tcp", "127.0.0.1:7000")
 	if err != nil {
@@ -73,7 +74,7 @@ func getBuyByCount() {
 	}
 	fmt.Println("连接RPC服务成功")
 
-	var index = 10000
+	var index = 6000
 	var result BuyCountAndLevel
 	err = client.Call("ServerBuyRules.GetByIndex", &index, &result)
 

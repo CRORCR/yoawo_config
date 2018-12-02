@@ -1,7 +1,6 @@
 package mode
 
 import (
-	"config/lib"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -24,15 +23,25 @@ type BuyRules struct {
 }
 
 var (
-	buyRules  BuyRules
-	GBRulLock *sync.RWMutex
+	buyRules         BuyRules
+	GBRulLock        *sync.RWMutex
 	buyCountAndLevel BuyCountAndLevel
+)
+
+const (
+	l45 = 102
+	l60 = 103
+	l75 = 104
+	l90 = 105
 )
 
 type BuyCountAndLevel struct {
 	Level int `json:"level"`
 	Num   int `json:"num"`
 }
+
+var buyLevelAndCountArray [][]int
+
 
 /*
  * 描述：	把相应配置文件中的数据刷新到内存中，本方法在
@@ -53,6 +62,7 @@ func BuyRulesInit(strFileName string) {
 		panic("读取文件错误:" + strFileName)
 	}
 	json.Unmarshal(jsonData, &buyRules)
+	buyLevelAndCountArray = [][]int{{l45, buyRules.V45}, {l60, buyRules.V60}, {l75, buyRules.V75}, {l90,  buyRules.V90}}
 	fmt.Println("FILE:", &buyRules)
 	GBRulLock.RUnlock()
 }
@@ -102,31 +112,37 @@ func (a *BuyCountAndLevel) Get(index int) {
  * desc:  "v45":150,"v60":600,"v75":7000,"v90":90000
  * @create: 2018/11/28
  */
+ // buyLevelAndCountArray = [][]int{{l45, v45}, {l60, v60}, {l75, v75}, {l90, v90}}
 func getLevelAndCount(index int) (a BuyCountAndLevel) {
-	buy :=BuyCountAndLevel{}
-	if index<150{
-		buy.Level=0
-		buy.Num=0
-	}else if index>=lib.BuyLevelAndCountArray[0][1] && index<lib.BuyLevelAndCountArray[1][1]{//150-600
-		buy.Level=lib.BuyLevelAndCountArray[0][0]
-		v:=index/lib.BuyLevelAndCountArray[0][1]
-		float,_ := strconv.ParseFloat(strconv.Itoa(v),64)
-		buy.Num=int(math.Floor(float))
-	}else if index>=lib.BuyLevelAndCountArray[1][1] && index<lib.BuyLevelAndCountArray[2][1]{//600-7000
-		buy.Level=lib.BuyLevelAndCountArray[1][0]
-		v:=index/lib.BuyLevelAndCountArray[1][1]
-		float,_ := strconv.ParseFloat(strconv.Itoa(v),64)
-		buy.Num=int(math.Floor(float))
-	}else if index>=lib.BuyLevelAndCountArray[2][1] && index<lib.BuyLevelAndCountArray[3][1]{
-		buy.Level=lib.BuyLevelAndCountArray[2][0]
-		v:=index/lib.BuyLevelAndCountArray[2][1]
-		float,_ := strconv.ParseFloat(strconv.Itoa(v),64)
-		buy.Num=int(math.Floor(float))
-	}else{
-		buy.Level=lib.BuyLevelAndCountArray[3][0]
-		v:=index/lib.BuyLevelAndCountArray[3][1]
-		float,_ := strconv.ParseFloat(strconv.Itoa(v),64)
-		buy.Num=int(math.Floor(float))
+	buy := BuyCountAndLevel{}
+	if index >= buyLevelAndCountArray[0][1] && index < buyLevelAndCountArray[1][1] { //150-600
+		buy.Level = buyLevelAndCountArray[0][0]
+		v := index / buyLevelAndCountArray[0][1]
+		float, _ := strconv.ParseFloat(strconv.Itoa(v), 64)
+		buy.Num = int(math.Floor(float))
+		fmt.Println("&&&& 01")
+	} else if index >= buyLevelAndCountArray[1][1] && index < buyLevelAndCountArray[2][1] { //600-7000
+		buy.Level = buyLevelAndCountArray[1][0]
+		v := index / buyLevelAndCountArray[1][1]
+		float, _ := strconv.ParseFloat(strconv.Itoa(v), 64)
+		buy.Num = int(math.Floor(float))
+		fmt.Println("&&&& 02")
+	} else if index >= buyLevelAndCountArray[2][1] && index < buyLevelAndCountArray[3][1] {
+		buy.Level = buyLevelAndCountArray[2][0]
+		v := index / buyLevelAndCountArray[2][1]
+		float, _ := strconv.ParseFloat(strconv.Itoa(v), 64)
+		buy.Num = int(math.Floor(float))
+		fmt.Println("&&&& 03")
+	} else if index >= buyLevelAndCountArray[3][1] {
+		buy.Level = buyLevelAndCountArray[3][0]
+		v := index / buyLevelAndCountArray[3][1]
+		float, _ := strconv.ParseFloat(strconv.Itoa(v), 64)
+		buy.Num = int(math.Floor(float))
+		fmt.Println("&&&& 04")
+	} else {
+		buy.Level = 0
+		buy.Num = 0
+		fmt.Println("&&&& 05")
 	}
 	return buy
 }
