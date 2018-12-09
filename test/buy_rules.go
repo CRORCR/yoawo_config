@@ -74,7 +74,7 @@ func getBuyByCount() {
 	}
 	fmt.Println("连接RPC服务成功")
 
-	var index = 6000
+	var index = 10000
 	var result BuyCountAndLevel
 	err = client.Call("ServerBuyRules.GetByIndex", &index, &result)
 
